@@ -1,8 +1,15 @@
-import StringCounter from "./StringCounter";
+import CharCounter from './CharCounter';
+import { LanguageProvider } from './context/LanguageProvider';
+import { ThemeProvider } from './context/ThemeProvider';
 
 function App() {
-  return <StringCounter />;
+  return (
+    <ThemeProvider>
+      <LanguageProvider>
+        <CharCounter />
+      </LanguageProvider>
+    </ThemeProvider>
+  );
 }
 
 export default App;
-

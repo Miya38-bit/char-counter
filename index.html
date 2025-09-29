@@ -9,5 +9,27 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      (function () {
+        try {
+          const svaedTheme = localStorage.getItem('theme');
+          const systemDark = window.matchMedia(
+            '(prefers-color-scheme: dark)'
+          ).matches;
+          const isDark = svaedTheme === 'dark' || (!svaedTheme && systemDark);
+
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {
+          if (
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches
+          ) {
+            document.documentElement.classList.add('dark');
+          }
+        }
+      })();
+    </script>
   </body>
 </html>
