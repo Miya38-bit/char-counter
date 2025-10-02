@@ -43,7 +43,7 @@ export default function TextInputSection({
         rows={8}
       ></textarea>
 
-      <div className="mt-4 flex flex-wrap justify-center gap-5">
+      <div className="mt-4 mx-auto grid grid-cols-2 justify-items-center gap-5 sm:grid-cols-4 w-fit">
         <button
           className={`flex w-[90px] items-center justify-center gap-2 border border-[var(--border-color)] px-4 py-2 text-sm transition duration-300 ${
             canUndo
@@ -57,7 +57,7 @@ export default function TextInputSection({
           onClick={onUndo}
           disabled={!canUndo}
         >
-          <Undo2 size={16}/>
+          <Undo2 size={16} />
           {t.textInput.undoButton}
         </button>
         <button
@@ -73,14 +73,14 @@ export default function TextInputSection({
           onClick={onRedo}
           disabled={!canRedo}
         >
-          <Redo2 size={16}/> {t.textInput.redoButton}
+          <Redo2 size={16} /> {t.textInput.redoButton}
         </button>
         <button
           className="flex w-[100px] cursor-pointer items-center justify-center gap-2 border border-[var(--border-color)] bg-[var(--card-bg)] px-4 py-2 text-sm text-[var(--text-primary)] transition duration-300 hover:bg-[var(--border-color)]"
           id="clearBtn"
           onClick={onClearText}
         >
-          <Trash size={16}/>
+          <Trash size={16} />
           {t.textInput.clearButton}
         </button>
         <button
@@ -97,13 +97,13 @@ export default function TextInputSection({
           {/* アイコン：状態によって変化 */}
           {copyStatus === 'idle' ? (
             // コピーアイコン（重なった四角形）
-            <Copy size={16}/>
+            <Copy size={16} />
           ) : copyStatus === 'success' ? (
             // チェックマーク
-            <Check size={16}/>
+            <Check size={16} />
           ) : (
             // ×マーク
-            <CircleAlert size={16}/>
+            <CircleAlert size={16} />
           )}
 
           {/* テキスト：idle時のみ表示 */}
