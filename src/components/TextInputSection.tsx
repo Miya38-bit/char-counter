@@ -76,7 +76,7 @@ export default function TextInputSection({
           <Redo2 size={16}/> {t.textInput.redoButton}
         </button>
         <button
-          className="flex w-[90px] cursor-pointer items-center justify-center gap-2 border border-[var(--border-color)] bg-[var(--card-bg)] px-4 py-2 text-sm text-[var(--text-primary)] transition duration-300 hover:bg-[var(--border-color)]"
+          className="flex w-[100px] cursor-pointer items-center justify-center gap-2 border border-[var(--border-color)] bg-[var(--card-bg)] px-4 py-2 text-sm text-[var(--text-primary)] transition duration-300 hover:bg-[var(--border-color)]"
           id="clearBtn"
           onClick={onClearText}
         >
