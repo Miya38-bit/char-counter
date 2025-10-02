@@ -1,6 +1,6 @@
 export const LANGUAGES = ['ja', 'en'] as const;
 
-export type Language = typeof LANGUAGES[number];
+export type Language = (typeof LANGUAGES)[number];
 
 // 一つの言語分のデータ構造
 export interface TranslationSet {
@@ -24,15 +24,24 @@ export interface TranslationSet {
     redoTooltipDisabled: string;
     clearButton: string;
     copyButton: string;
+    copySuccess: string;
+    copyError: string;
   };
   search: {
     label: string;
     placeholder: string;
     resultText: string; // "{count}"をプレースホルダーとして使用
     overlapToggleLabel: string;
-    overlapAriaLabel:string,
+    overlapAriaLabel: string;
     helpTooltip: string;
     helpContent: string;
+  };
+  replace: {
+    label: string;
+    placeholder: string;
+    button: string;
+    buttonAriaLabel: string;
+    resultText: string;
   };
   results: {
     charCount: {
@@ -63,9 +72,6 @@ export interface TranslationSet {
       show: string;
       hide: string;
     };
-    clipboardButton: string;
-    shareButton: string;
-    historyButton: string;
   };
   time: {
     seconds: string;

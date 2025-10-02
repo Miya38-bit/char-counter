@@ -9,6 +9,7 @@ import {
   countSearchTerm,
   formatReadingTime,
 } from './utils/computeStas';
+import type { ButtonStatus } from './types/editText';
 
 export const MAX_LIMIT_HISTORY = 50;
 
@@ -39,6 +40,8 @@ export default function CharCounter() {
     currentIndex: -1,
   });
   const timeoutRef = useRef<number | null>(null);
+  const copyTimeoutRef = useRef<number | null>(null);
+  const replaceTimeoutRef = useRef<number | null>(null);
   const [textResults, setTextResults] = useState<TextResults>({
     charCount: 0,
     byteCount: 0,
@@ -49,6 +52,10 @@ export default function CharCounter() {
   });
   const [term, setTerm] = useState<string>('');
   const [termResult, setTermResult] = useState<number>(0);
+  const [replaceTerm, setReplaceTerm] = useState<string>('');
+  const [replaceTermResult, setReplaceTermResult] = useState<number>(0);
+  const [copyStatus, setCopyStatus] = useState<ButtonStatus>('idle');
+  const [replaceStatus, setReplaceStatus] = useState<ButtonStatus>('idle');
 
   const addHistory = (text: string) => {
     setTextHistory(prev => {
@@ -106,21 +113,11 @@ export default function CharCounter() {
 
   const canUndo = textHistory.currentIndex > 0;
   const canRedo = textHistory.currentIndex < textHistory.history.length - 1;
-  console.log(canUndo);
-  console.log(canRedo);
 
   // 入力されたテキストを保持
   const handleAddText = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
     const text = e.target.value;
     setText(() => text);
-
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    timeoutRef.current = setTimeout(() => {
-      addHistory(text);
-    }, 1000);
   };
 
   // テキストエリアをクリア
@@ -137,15 +134,33 @@ export default function CharCounter() {
   };
 
   useEffect(() => {
+    if (textHistory.history[textHistory.currentIndex] === text) {
+      return;
+    }
+
     const stats = computeStats(text);
     setTextResults(() => ({
       ...stats,
     }));
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      addHistory(text);
+    }, 1000);
+
+    // textの変更のみを監視
+    // textHistory.historyを依存配列に含めると、
+    // addHistory実行時に再度useEffectが発火してしまうため除外
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text]);
 
   const handleSearchTerm = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const term = e.target.value;
     setTerm(() => term);
+    setReplaceTermResult(() => countSearchTerm(false, text, term));
   };
 
   const handleIsOverlapEnabled = () => {
@@ -157,10 +172,55 @@ export default function CharCounter() {
     setTermResult(() => termCount);
   }, [isOverlapEnabled, text, term]);
 
+  const handleReplaceTerm = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const replaceTerm = e.target.value;
+    setReplaceTerm(() => replaceTerm);
+  };
+
+  const handleReplaceText = (): void => {
+    const regex = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), `g`);
+    const newText = text.replace(regex, replaceTerm);
+
+    try {
+      if (replaceTimeoutRef.current) {
+        clearTimeout(replaceTimeoutRef.current);
+      }
+      // 置換ボタン押下後はすぐに履歴保存
+      setText(newText);
+
+      setReplaceStatus('success');
+      setReplaceTermResult(() => 0);
+    } catch (error) {
+      setReplaceStatus('error');
+      console.error('Failed to replace text:', error);
+    } finally {
+      replaceTimeoutRef.current = setTimeout(() => {
+        setReplaceStatus('idle');
+      }, 1000);
+    }
+  };
+
+  const handleTextCopy = async () => {
+    try {
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+      await navigator.clipboard.writeText(text);
+      setCopyStatus('success');
+    } catch (error) {
+      setCopyStatus('error');
+      console.error('Failed to copy text:', error);
+    } finally {
+      copyTimeoutRef.current = setTimeout(() => {
+        setCopyStatus('idle');
+      }, 1000);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[var(--bg-color)] font-sans text-[var(--text-primary)] transition-colors duration-300 ease-in-out">
       <Header />
-      <main className="mx-auto my-0 max-w-7xl p-4 md:p-8">
+      <main className="mx-auto my-0 max-w-7xl p-4 md:p-6">
         <HeroSection />
         <TextInputSection
           text={text}
@@ -168,15 +228,22 @@ export default function CharCounter() {
           onClearText={handleClear}
           onUndo={handleUndo}
           onRedo={handleRedo}
+          onTextCopy={handleTextCopy}
+          copyStatus={copyStatus}
           canUndo={canUndo}
           canRedo={canRedo}
         />
         <SearchSection
           term={term}
+          replaceTerm={replaceTerm}
           termResult={termResult}
+          replaceTermResult={replaceTermResult}
           isOverlapEnabled={isOverlapEnabled}
+          replaceStatus={replaceStatus}
           onChangeSearchTerm={handleSearchTerm}
           onChangeIsOverlapEnabled={handleIsOverlapEnabled}
+          onChangeReplaceTerm={handleReplaceTerm}
+          onClickReaplceTerm={handleReplaceText}
         />
         <ResultsSection
           textResults={textResults}
