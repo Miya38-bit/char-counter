@@ -21,7 +21,7 @@ export const translations: TranslationData = {
       redoButton: 'Redo',
       redoTooltip: 'やり直し',
       redoTooltipDisabled: 'やり直し（利用できません）',
-      clearButton: ' クリア',
+      clearButton: 'クリア',
       copyButton: 'コピー',
       copySuccess: '✅ コピーしました！',
       copyError: '❌ 失敗',

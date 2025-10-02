@@ -43,9 +43,9 @@ export default function TextInputSection({
         rows={8}
       ></textarea>
 
-      <div className="mt-4 mx-auto grid grid-cols-2 justify-items-center gap-5 sm:grid-cols-4 w-fit">
+      <div className="mt-4 mx-auto grid grid-cols-2 justify-items-center gap-4 sm:grid-cols-4 w-fit">
         <button
-          className={`flex w-[90px] items-center justify-center gap-2 border border-[var(--border-color)] px-4 py-2 text-sm transition duration-300 ${
+          className={`flex w-[100px] items-center justify-center gap-2 border border-[var(--border-color)] px-4 py-2 text-sm transition duration-300 ${
             canUndo
               ? 'cursor-pointer bg-[var(--card-bg)] text-[var(--text-primary)] hover:bg-[var(--border-color)]'
               : 'cursor-not-allowed bg-[var(--bg-available)] text-[var(--text-secondary)]'
@@ -61,7 +61,7 @@ export default function TextInputSection({
           {t.textInput.undoButton}
         </button>
         <button
-          className={`flex w-[90px] items-center justify-center gap-2 border border-[var(--border-color)] px-4 py-2 text-sm transition duration-300 ${
+          className={`flex w-[100px] items-center justify-center gap-2 border border-[var(--border-color)] px-4 py-2 text-sm transition duration-300 ${
             canRedo
               ? 'cursor-pointer bg-[var(--card-bg)] text-[var(--text-primary)] hover:bg-[var(--border-color)]'
               : 'cursor-not-allowed bg-[var(--bg-available)] text-[var(--text-secondary)]'

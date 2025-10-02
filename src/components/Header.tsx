@@ -7,7 +7,7 @@ export default function Header() {
   const { toggleLanguage, t } = useLanguage();
 
   return (
-    <header className="flex items-center justify-between border-b border-[var(--border-color)] bg-[var(--header-color)] p-4 shadow-[var(--shadow)] transition-colors duration-300 md:px-8 md:py-4 sticky top-0">
+    <header className="flex items-center justify-between border-b border-[var(--border-color)] bg-[var(--header-color)] p-4 shadow-[var(--shadow)] transition-colors duration-300 md:px-8 md:py-4 sticky top-0 z-100">
       <div className="flex items-center gap-2 text-xl font-semibold text-[var(--text-primary)]">
         <img
           src="/favicon-32x32.png"
