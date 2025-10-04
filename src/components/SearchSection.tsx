@@ -1,13 +1,13 @@
 import { Check, CircleAlert, RefreshCcw, Search } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import type { ButtonStatus } from '../types/editText';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface SearchSectionProps {
-  term: string;
+  searchTerm: string;
   replaceTerm: string;
-  termResult: number;
-  replaceTermResult: number;
+  searchResult: number;
+  replaceResult: number;
   isOverlapEnabled: boolean;
   replaceStatus: ButtonStatus;
   onChangeSearchTerm: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -17,10 +17,10 @@ interface SearchSectionProps {
 }
 
 export default function SearchSection({
-  term,
+  searchTerm,
   replaceTerm,
-  termResult,
-  replaceTermResult,
+  searchResult,
+  replaceResult,
   isOverlapEnabled,
   replaceStatus,
   onChangeSearchTerm,
@@ -29,6 +29,30 @@ export default function SearchSection({
   onClickReaplceTerm,
 }: SearchSectionProps) {
   const [isToolTipVisible, setIsToolTipVisible] = useState(false);
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (!isToolTipVisible) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      if (
+        tooltipRef.current?.contains(target) ||
+        buttonRef.current?.contains(target)
+      )
+        return;
+
+      setIsToolTipVisible(false);
+    };
+
+    document.addEventListener('click', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isToolTipVisible]);
 
   const handleClickIsToolTipVisible = () => {
     setIsToolTipVisible(prev => !prev);
@@ -51,7 +75,7 @@ export default function SearchSection({
             className="flex-1 rounded-sm border border-[var(--border-color)] bg-[var(--bg-color)] px-3 py-2 text-sm text-[var(--text-primary)] transition-colors duration-300 placeholder:text-[var(--text-secondary)] focus:border-[var(--accent-blue)] focus:shadow-[0_0_0_3px_rgb(59,130,246,0.1)] focus:outline-none"
             placeholder={t.search.placeholder}
             onChange={onChangeSearchTerm}
-            value={term}
+            value={searchTerm}
           />
         </div>
 
@@ -88,11 +112,13 @@ export default function SearchSection({
               className="peer flex h-5 w-5 items-center justify-center rounded-full border border-[var(--border-color)] text-xs text-[var(--text-secondary)] transition-colors duration-300 hover:bg-[var(--border-color)] hover:text-[var(--text-primary)]"
               aria-label={t.search.helpTooltip}
               onClick={handleClickIsToolTipVisible}
+              ref={buttonRef}
             >
               ?
             </button>
             <div
               className={`${isToolTipVisible ? 'visible' : 'invisible peer-hover:visible'} absolute bottom-full left-1/2 z-10 mb-2 w-58 -translate-x-1/2 transform rounded-lg bg-gray-900 px-3 py-2 text-sm whitespace-pre-line text-white shadow-lg`}
+              ref={tooltipRef}
             >
               {t.search.helpContent}
             </div>
@@ -101,7 +127,7 @@ export default function SearchSection({
             className="text-sm text-[var(--text-secondary)]"
             id="searchResult"
           >
-            {t.search.resultText.replace('{count}', termResult.toString())}
+            {t.search.resultText.replace('{count}', searchResult.toString())}
           </div>
         </div>
       </div>
@@ -159,7 +185,7 @@ export default function SearchSection({
             >
               {t.replace.resultText.replace(
                 '{count}',
-                replaceTermResult.toString()
+                replaceResult.toString()
               )}
             </div>
           </div>
