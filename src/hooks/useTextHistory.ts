@@ -14,6 +14,7 @@ export const useTextHistory = <T>(initialValue: T) => {
   });
   const timeoutRef = useRef<number | null>(null);
   const isUndoRedoRef = useRef<boolean>(false);
+  const isFirstMount = useRef<boolean>(true);
 
   const addHistory = useCallback((text: T) => {
     setTextHistory(prev => {
@@ -30,6 +31,7 @@ export const useTextHistory = <T>(initialValue: T) => {
 
       newHistory.push(text);
 
+      console.log(newHistory.length);
       return {
         history: newHistory,
         currentIndex: newHistory.length - 1,
@@ -74,6 +76,12 @@ export const useTextHistory = <T>(initialValue: T) => {
   };
 
   useEffect(() => {
+    // 初回マウント時はスキップ
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+
     if (isUndoRedoRef.current) {
       isUndoRedoRef.current = false;
       return;
@@ -83,6 +91,7 @@ export const useTextHistory = <T>(initialValue: T) => {
       clearTimeout(timeoutRef.current);
     }
 
+    console.log(text);
     timeoutRef.current = setTimeout(() => {
       addHistory(text);
     }, 1000);
